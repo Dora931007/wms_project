@@ -32,6 +32,8 @@ public class RecordController {
     @PostMapping("/save")
     public Result add(@RequestBody Record record){
         Goods goods = goodsService.getById(record.getGoods());
+        Goods remark = goodsService.getById(record.getRemark());
+        System.out.println("remark的值是:" + remark);
         int n = record.getCount();
 
         if("2".equals(record.getAction())){
@@ -40,8 +42,16 @@ public class RecordController {
         }
         int num = goods.getCount()+n;
         goods.setCount(num);
+
+        // 新增代码：将record的remark更新到goods
+        if(StringUtils.isNotBlank(record.getRemark())) {
+            goods.setRemark(record.getRemark());
+        }
+
         goodsService.updateById(goods);
         return recordService.save(record)?Result.suc():Result.fail();
+
+
     }
 
 
@@ -59,6 +69,10 @@ public class RecordController {
 
         QueryWrapper<Record> queryWrapper = new QueryWrapper();
         queryWrapper.apply(" a.goods=b.id and b.storage=c.id and b.goodsType=d.id ");
+
+        // 添加排序条件，按创建时间降序（假设有createTime字段）
+        queryWrapper.orderByDesc("a.createTime");
+
         if("2".equals(roleId)){
             queryWrapper.apply(" a.user_id= "+userId);
         }

@@ -26,6 +26,7 @@ public class GoodsController {
 
     @PostMapping("/save")
     public Result add(@RequestBody Goods goods){
+        System.out.println("Save goods data: " + goods);
         return goodsService.save(goods)?Result.suc():Result.fail();
     }
 
