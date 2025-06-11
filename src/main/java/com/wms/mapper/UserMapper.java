@@ -8,14 +8,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-/**
- * <p>
- *  Mapper 接口
- * </p>
- *
- * @author wms
- * @since 2025-05-28
- */
+
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
 

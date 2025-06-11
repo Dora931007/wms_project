@@ -12,14 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
-/**
- * <p>
- *  服务实现类
- * </p>
- *
- * @author wms
- * @since 2025-06-05
- */
+
 @Service
 public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements GoodsService {
     @Resource

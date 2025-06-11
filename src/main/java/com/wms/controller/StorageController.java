@@ -17,14 +17,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * <p>
- *  前端控制器
- * </p>
- *
- * @author wms
- * @since 2025-06-05
- */
+
 @RestController
 @RequestMapping("/storage")
 public class StorageController {

@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 
-//@CrossOrigin(origins = "*")
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -62,15 +62,17 @@ public class UserController {
 
         if(list.size()>0){
             User user1 = list.get(0);
-            List menuLis =  menuService.lambdaQuery().like(Menu::getMenuright,user1.getRoleId()).list();
-            HashMap res =  new HashMap();
-            res.put("user",user1);
-            res.put("menu",menuLis);
+            List<Menu> menuList =  menuService.lambdaQuery().like(Menu::getMenuright,user1.getRoleId()).list();
+            HashMap<String, Object> res = new HashMap<>();
+            res.put("user", user1);
+            res.put("menu", menuList); // 返回的是 List<Menu>
             return Result.suc(res);
 
         }
         return Result.fail();
     }
+
+
 
     //修改
 //    @PostMapping("/update")
@@ -159,6 +161,7 @@ public class UserController {
         page.setCurrent(queryPageParam.getPageNum());
         page.setSize(queryPageParam.getPageSize());
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+
         if(StringUtils.isNotBlank(name) && !"null".equals(name)){
             lambdaQueryWrapper.like(User::getName,name);
         }

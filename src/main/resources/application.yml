@@ -11,3 +11,9 @@ spring:
 Logging:
   level:
     com.wms: debug
+
+
+encrypt:
+  enable: true
+  key: ENC(ypxav+oeh7K1U73uxaceEsPCy/3VGG8DHv+a8KhagvXkF7X7/oIB6w==)  #如果使用aes加密方式,key的长度只支持 16/24/32字节
+  type: sm4  #目前只支持sm4和aes两种加密方式。如果不填则使用默认（aes）的加密方式

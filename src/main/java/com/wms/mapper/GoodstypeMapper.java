@@ -9,14 +9,7 @@ import com.wms.entity.Storage;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-/**
- * <p>
- *  Mapper 接口
- * </p>
- *
- * @author wms
- * @since 2025-06-05
- */
+
 @Mapper
 public interface GoodstypeMapper extends BaseMapper<Goodstype> {
     IPage pageCC(IPage<Goodstype> page, @Param(Constants.WRAPPER) Wrapper wrapper);

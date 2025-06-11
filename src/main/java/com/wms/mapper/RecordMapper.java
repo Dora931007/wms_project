@@ -9,14 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-/**
- * <p>
- *  Mapper 接口
- * </p>
- *
- * @author wms
- * @since 2025-06-05
- */
+
 @Mapper
 public interface RecordMapper extends BaseMapper<Record> {
 

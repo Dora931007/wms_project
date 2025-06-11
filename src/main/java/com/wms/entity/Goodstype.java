@@ -8,14 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/**
- * <p>
- * 
- * </p>
- *
- * @author wms
- * @since 2025-06-05
- */
+
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="Goodstype对象", description="")

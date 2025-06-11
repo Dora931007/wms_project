@@ -17,14 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.HashMap;
 
-/**
- * <p>
- *  前端控制器
- * </p>
- *
- * @author wms
- * @since 2025-06-05
- */
+
 @RestController
 @RequestMapping("/goods")
 public class GoodsController {

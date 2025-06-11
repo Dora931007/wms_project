@@ -3,20 +3,11 @@ package com.wms.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
-
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-/**
- * <p>
- * 
- * </p>
- *
- * @author wms
- * @since 2025-05-28
- */
+
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="User对象", description="")
@@ -34,6 +25,7 @@ public class User implements Serializable {
 
     @ApiModelProperty(value = "名字")
     private String name;
+
 
     @ApiModelProperty(value = "密码")
     private String password;

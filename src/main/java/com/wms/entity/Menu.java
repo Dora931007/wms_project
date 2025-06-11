@@ -7,14 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/**
- * <p>
- * 
- * </p>
- *
- * @author wms
- * @since 2025-06-04
- */
+
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="Menu对象", description="")

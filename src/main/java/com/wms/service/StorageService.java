@@ -6,14 +6,7 @@ import com.wms.entity.Storage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wms.entity.User;
 
-/**
- * <p>
- *  服务类
- * </p>
- *
- * @author wms
- * @since 2025-06-05
- */
+
 public interface StorageService extends IService<Storage> {
 
 
