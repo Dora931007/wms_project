@@ -70,7 +70,7 @@ public class RecordController {
         QueryWrapper<Record> queryWrapper = new QueryWrapper();
         queryWrapper.apply(" a.goods=b.id and b.storage=c.id and b.goodsType=d.id ");
 
-        // 添加排序条件，按创建时间降序（假设有createTime字段）
+        // 添加排序条件，按创建时间降序
         queryWrapper.orderByDesc("a.createTime");
 
         if("2".equals(roleId)){
