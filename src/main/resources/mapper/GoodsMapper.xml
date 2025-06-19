@@ -15,6 +15,9 @@
     <select id="pageCC" resultType="com.wms.entity.Goods">
         select * from goods ${ew.customSqlSegment}
     </select>
+    <select id="goodsList" resultType="com.wms.entity.Goods">
+        select id,name,storage,goodstype,count,remark from goods
+    </select>
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, name, storage, goodsType, count, remark

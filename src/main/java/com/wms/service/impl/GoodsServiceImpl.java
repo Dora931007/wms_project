@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 
 @Service
@@ -22,5 +23,11 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     public IPage pageCC(IPage<Goods> page, Wrapper wrapper) {
         return goodsMapper.pageCC(page,wrapper);
     }
+
+    @Override
+    public List<Goods> goodsList() {
+        return goodsMapper.goodsList();
+    }
+
 
 }

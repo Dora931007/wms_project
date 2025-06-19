@@ -6,9 +6,14 @@ import com.wms.entity.Goods;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wms.entity.Goodstype;
 
+import java.util.List;
+
 
 public interface GoodsService extends IService<Goods> {
 
     IPage pageCC(IPage<Goods> page, Wrapper wrapper);
 
+    List<Goods> goodsList();
+
+    //int batchInsert(Goods goods);
 }

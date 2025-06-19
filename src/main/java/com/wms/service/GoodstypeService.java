@@ -6,9 +6,15 @@ import com.wms.entity.Goodstype;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wms.entity.Storage;
 
+import java.util.Map;
+
 
 public interface GoodstypeService extends IService<Goodstype> {
 
     IPage pageCC(IPage<Goodstype> page, Wrapper wrapper);
+
+    Map<Integer, String> getGoodsTypeMap();
+
+    Map<String, Integer> getGoodsTypeNameToIdMap();
 
 }

@@ -1,6 +1,9 @@
 package com.wms.controller;
 
 
+import cn.hutool.poi.excel.ExcelReader;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -8,15 +11,19 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wms.common.QueryPageParam;
 import com.wms.common.Result;
-import com.wms.entity.Goods;
-import com.wms.entity.Record;
-import com.wms.entity.User;
+import com.wms.entity.*;
 import com.wms.service.GoodsService;
+import com.wms.service.GoodstypeService;
 import com.wms.service.RecordService;
+import com.wms.service.StorageService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
+import java.util.*;
 
 
 @RestController
@@ -28,6 +35,12 @@ public class RecordController {
 
     @Resource
     private GoodsService goodsService;
+
+    @Resource
+    private GoodstypeService goodstypeService;
+
+    @Resource
+    private StorageService storageService;
 
     @PostMapping("/save")
     public Result add(@RequestBody Record record){

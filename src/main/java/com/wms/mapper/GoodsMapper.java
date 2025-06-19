@@ -9,9 +9,12 @@ import com.wms.entity.Goodstype;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 
 @Mapper
 public interface GoodsMapper extends BaseMapper<Goods> {
     IPage pageCC(IPage<Goods> page, @Param(Constants.WRAPPER) Wrapper wrapper);
 
+    List<Goods> goodsList();
 }

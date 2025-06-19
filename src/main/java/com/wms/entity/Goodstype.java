@@ -1,5 +1,6 @@
 package com.wms.entity;
 
+import cn.hutool.core.annotation.Alias;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
@@ -18,12 +19,15 @@ public class Goodstype implements Serializable {
 
     @ApiModelProperty(value = "主键")
     @TableId(value = "id", type = IdType.AUTO)
+    @Alias("序号")
     private Integer id;
 
-    @ApiModelProperty(value = "分类名")
+    @ApiModelProperty(value = "物品分类名称")
+    @Alias("物品分类名称")
     private String name;
 
     @ApiModelProperty(value = "备注")
+    @Alias("备注")
     private String remark;
 
 

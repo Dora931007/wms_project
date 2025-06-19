@@ -56,6 +56,17 @@
             <artifactId>spring-boot-starter-swagger</artifactId>
             <version>1.5.1.RELEASE</version>
         </dependency>
+        <!-- 导入/导出 -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.18</version>
+        </dependency>
     </dependencies>
 
     <build>
