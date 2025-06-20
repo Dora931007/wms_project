@@ -13,7 +13,7 @@
         <result column="remark" property="remark" />
     </resultMap>
 
-    <select id="pageCC" resultType="com.wms.entity.RecordRes">
+    <select id="pageCC" resultType="com.wms.entity.Record">
         select a.*,b.name goodsname,c.name storagename,d.name goodstype,
         (select u.name from user u where u.id=a.user_id)username,
         (select u.name from user u where u.id=a.admin_id)adminname

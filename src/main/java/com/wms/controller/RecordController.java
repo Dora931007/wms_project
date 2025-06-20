@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -102,5 +103,4 @@ public class RecordController {
         recordService.pageCC(page,queryWrapper);
         return Result.suc(result.getRecords(),result.getTotal());
     }
-
 }

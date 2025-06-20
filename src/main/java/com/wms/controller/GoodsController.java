@@ -58,6 +58,12 @@ public class GoodsController {
         return goodsService.removeById(id) ? Result.suc() : Result.fail();
     }
 
+    @GetMapping("/list")
+    public Result list(){
+        List list =  goodsService.goodsList();
+        return Result.suc(list);
+    }
+
     @PostMapping("/listPage")
     public Result listPage(@RequestBody QueryPageParam queryPageParam) {
         HashMap param = queryPageParam.getParam();
@@ -158,6 +164,31 @@ public class GoodsController {
         // 写入数据到数据库
         goodsService.saveBatch(goodsList);
         return Result.suc();
+    }
+
+    @GetMapping("/statistics")
+    public Result getGoodsStatistics() {
+        // 1. 按仓库统计商品数量
+        List<Map<String, Object>> storageStats = goodsService.getGoodsCountByStorage();
+        // 2. 按分类统计商品数量
+        List<Map<String, Object>> typeStats = goodsService.getGoodsCountByType();
+        // 3. 库存预警统计(数量<10的)
+        int lowStockCount = goodsService.getLowStockCount(10);
+        // 4. 商品总数
+        int totalGoods = goodsService.count();
+        // 5. 库存总量
+        int totalStock = goodsService.getTotalStock();
+        // 6. 按物品统计商品数量（新增）
+        List<Map<String, Object>> goodsStats = goodsService.getGoodsCountByGoods();
+        Map<String, Object> result = new HashMap<>();
+        result.put("storageStats", storageStats);
+        result.put("typeStats", typeStats);
+        result.put("goodsStats", goodsStats);
+        result.put("lowStockCount", lowStockCount);
+        result.put("totalGoods", totalGoods);
+        result.put("totalStock", totalStock);
+        return Result.suc(result);
+
 
     }
 }

@@ -8,11 +8,17 @@ import com.wms.mapper.GoodsMapper;
 import com.wms.mapper.RecordMapper;
 import com.wms.service.RecordService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service
 public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> implements RecordService {
 
@@ -23,5 +29,4 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
     public IPage pageCC(IPage<Record> page, Wrapper wrapper) {
         return recordMapper.pageCC(page,wrapper);
     }
-
 }
