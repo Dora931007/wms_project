@@ -3,6 +3,7 @@ package com.wms.service.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wms.entity.Goods;
 import com.wms.entity.Goodstype;
 import com.wms.mapper.GoodsMapper;
@@ -22,8 +23,8 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     private GoodsMapper goodsMapper;
 
     @Override
-    public IPage pageCC(IPage<Goods> page, Wrapper wrapper) {
-        return goodsMapper.pageCC(page,wrapper);
+    public IPage<Goods> listGoodsPage(Page<Goods> page, Wrapper<Goods> queryWrapper) {
+        return goodsMapper.selectPage(page, queryWrapper);
     }
 
     @Override
@@ -33,36 +34,27 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Override
     public List<Map<String, Object>> getGoodsCountByStorage() {
-        return goodsMapper.selectMaps(new QueryWrapper<Goods>()
-                .select("storage, SUM(count) as total")
-                .groupBy("storage"));
+        return goodsMapper.getGoodsCountByStorage();
     }
 
     @Override
     public List<Map<String, Object>> getGoodsCountByType() {
-        return goodsMapper.selectMaps(new QueryWrapper<Goods>()
-                .select("goodstype, SUM(count) as total")
-                .groupBy("goodstype"));
-    }
-
-    @Override
-    public int getLowStockCount(int threshold) {
-        return count(new QueryWrapper<Goods>().lt("count", threshold));
-    }
-
-    @Override
-    public int getTotalStock() {
-        Map<String, Object> result = goodsMapper.selectMaps(new QueryWrapper<Goods>()
-                .select("SUM(count) as total")).get(0);
-        return result.get("total") != null ? ((Number)result.get("total")).intValue() : 0;
+        return goodsMapper.getGoodsCountByType();
     }
 
     @Override
     public List<Map<String, Object>> getGoodsCountByGoods() {
-        return goodsMapper.selectMaps(new QueryWrapper<Goods>()
-                .select("name,SUM(count) as total").groupBy("name"));
+        return goodsMapper.getGoodsCountByGoods();
     }
 
+    @Override
+    public int getLowStockCount(int threshold) {
+        return goodsMapper.getLowStockCount(10);
+    }
 
+    @Override
+    public int getTotalStock() {
+        return goodsMapper.getTotalStock();
+    }
 
 }

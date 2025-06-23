@@ -10,10 +10,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wms.common.QueryPageParam;
 import com.wms.common.Result;
-import com.wms.entity.Goods;
-import com.wms.entity.Menu;
-import com.wms.entity.Storage;
-import com.wms.entity.User;
+import com.wms.entity.*;
 import com.wms.service.StorageService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,30 +45,26 @@ public class StorageController {
         return storageService.removeById(id) ? Result.suc() : Result.fail();
     }
 
+
     @PostMapping("/listPage")
-    public Result listPage(@RequestBody QueryPageParam queryPageParam) {
-        HashMap param = queryPageParam.getParam();
-        String name = (String) param.get("name");
-
-        Page<Storage> page = new Page();
-        page.setCurrent(queryPageParam.getPageNum());
-        page.setSize(queryPageParam.getPageSize());
-
-        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.isNotBlank(name) && !"null".equals(name)) {
-            lambdaQueryWrapper.like(User::getName, name);
+    public Result listPage(@RequestBody @Valid QueryPageParam queryPageParam) {
+        // 参数校验
+        if (queryPageParam == null || queryPageParam.getParam() == null) {
+            return Result.fail();
         }
-
-        //IPage result = userService.pageC(page);
-        IPage result = storageService.pageCC(page, lambdaQueryWrapper);
-        storageService.pageCC(page, lambdaQueryWrapper);
-
-        List<Storage> storageList = storageService.lambdaQuery()
-                .orderByDesc(Storage::getId)
-                .list();
-        return Result.suc(result.getRecords(),result.getTotal());
-
-
+        Map<String, Object> param = queryPageParam.getParam();
+        String name = (String) param.get("name");
+        // 构建分页参数
+        Page<Storage> page = new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
+        // 构建查询条件
+        LambdaQueryWrapper<Storage> queryWrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.isNotBlank(name) && !"null".equals(name)) {
+            queryWrapper.like(Storage::getName, name);
+        }
+        queryWrapper.orderByDesc(Storage::getId);
+        // 执行分页查询
+        IPage<Storage> result = storageService.page(page, queryWrapper);
+        return Result.suc(result.getRecords(), result.getTotal());
     }
 
     @GetMapping("/list")
@@ -80,35 +74,42 @@ public class StorageController {
 
     }
 
-
     @GetMapping("/export")
     public void exportStorage(HttpServletResponse response) throws Exception {
-        ExcelWriter writer = ExcelUtil.getWriter(true);
+
+        // 1. 设置响应头
+        String fileName = URLEncoder.encode("仓库信息", "UTF-8") + ".xlsx";
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+
+        // 2. 获取所有数据
         List<Storage> list = storageService.list();
 
-        // 创建用于导出的Map列表
+        // 3. 转换为导出格式并添加前端序号
         List<Map<String, Object>> exportList = new ArrayList<>();
-        for (Storage item : list) {
-            Map<String, Object> storage = new LinkedHashMap<>();
-            storage.put("id", item.getId());
-            storage.put("name", item.getName());
-            storage.put("remark", item.getRemark());
-            exportList.add(storage);
+        for (int i = 0; i < list.size(); i++) {
+            Storage item = list.get(i);
+            Map<String, Object> map = new LinkedHashMap<>();
+            // 添加前端序号 (i+1)
+            map.put("serialNumber", i + 1);
+            map.put("name", item.getName());
+            map.put("remark", item.getRemark());
+            exportList.add(map);
         }
 
-        // 设置只导出需要的列（排除原始ID字段）
-        writer.addHeaderAlias("id", "序号");
-        writer.addHeaderAlias("name", "仓库名称");
-        writer.addHeaderAlias("remark", "备注");
+        // 4. 使用try-with-resources确保资源关闭
+        try (ExcelWriter writer = ExcelUtil.getWriter(true);
+             ServletOutputStream out = response.getOutputStream()) {
 
-        writer.write(exportList, true);
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
-        response.setHeader("content-Disposition", "attachment;filename=" + URLEncoder.encode("物品信息", "UTF-8") + ".xlsx");
-        ServletOutputStream outputStream = response.getOutputStream();
-        writer.flush(outputStream, true);
-        writer.close();
-        outputStream.flush();
-        outputStream.close();
+            // 5. 设置表头别名
+            writer.addHeaderAlias("serialNumber", "序号");
+            writer.addHeaderAlias("name", "仓库名称");
+            writer.addHeaderAlias("remark", "备注");
+
+            // 6. 写入数据并刷新
+            writer.write(exportList, true);
+            writer.flush(out, true);
+        }
     }
 
     @PostMapping("/import")

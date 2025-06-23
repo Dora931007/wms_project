@@ -4,22 +4,29 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.wms.entity.Record">
-        <id column="id" property="id" />
-        <result column="goods" property="goods" />
-        <result column="user_id" property="userId" />
-        <result column="admin_id" property="adminId" />
-        <result column="count" property="count" />
-        <result column="createtime" property="createtime" />
-        <result column="remark" property="remark" />
+        <id column="id" property="id"/>
+        <result column="goods" property="goods"/>
+        <result column="user_id" property="userId"/>
+        <result column="admin_id" property="adminId"/>
+        <result column="count" property="count"/>
+        <result column="createtime" property="createtime"/>
+        <result column="remark" property="remark"/>
     </resultMap>
 
     <select id="pageCC" resultType="com.wms.entity.Record">
-        select a.*,b.name goodsname,c.name storagename,d.name goodstype,
-        (select u.name from user u where u.id=a.user_id)username,
-        (select u.name from user u where u.id=a.admin_id)adminname
-         from record a ,goods b,storage c,goodsType d
-        /* where a.goods=b.id
-         and b.storage=c.id and b.goodsType=d.id*/
+        SELECT
+            a.*,
+            b.name AS goodsname,
+            c.name AS storagename,
+            d.name AS goodstype,
+            u1.name AS username,
+            u2.name AS adminname
+        FROM record a
+        INNER JOIN goods b ON a.goods = b.id
+        INNER JOIN storage c ON b.storage = c.id
+        INNER JOIN goodsType d ON b.goodsType = d.id
+        LEFT JOIN user u1 ON u1.id = a.user_id
+        LEFT JOIN user u2 ON u2.id = a.admin_id
         ${ew.customSqlSegment}
     </select>
 

@@ -4,15 +4,15 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.wms.entity.Menu">
-        <id column="id" property="id" />
-        <result column="menuCode" property="menucode" />
-        <result column="menuName" property="menuname" />
-        <result column="menuLevel" property="menulevel" />
-        <result column="menuParentCode" property="menuparentcode" />
-        <result column="menuClick" property="menuclick" />
-        <result column="menuRight" property="menuright" />
-        <result column="menuComponent" property="menucomponent" />
-        <result column="menuIcon" property="menuicon" />
+        <id column="id" property="id"/>
+        <result column="menuCode" property="menucode"/>
+        <result column="menuName" property="menuname"/>
+        <result column="menuLevel" property="menulevel"/>
+        <result column="menuParentCode" property="menuparentcode"/>
+        <result column="menuClick" property="menuclick"/>
+        <result column="menuRight" property="menuright"/>
+        <result column="menuComponent" property="menucomponent"/>
+        <result column="menuIcon" property="menuicon"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->

@@ -4,9 +4,9 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.wms.entity.Storage">
-        <id column="id" property="id" />
-        <result column="name" property="name" />
-        <result column="remark" property="remark" />
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="remark" property="remark"/>
     </resultMap>
 
     <select id="pageCC" resultType="com.wms.entity.Storage">
@@ -17,7 +17,6 @@
     <sql id="Base_Column_List">
         id, name, remark
     </sql>
-
 
 
 </mapper>

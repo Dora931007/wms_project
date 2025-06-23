@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.wms.entity.Storage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wms.entity.User;
 
 import java.util.Map;
 

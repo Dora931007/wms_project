@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.*;
@@ -42,61 +43,67 @@ public class GoodsController {
     @Resource
     private StorageService storageService;
 
+    //新增
     @PostMapping("/save")
     public Result add(@RequestBody Goods goods) {
         System.out.println("Save goods data: " + goods);
         return goodsService.save(goods) ? Result.suc() : Result.fail();
     }
 
+    //修改
     @PostMapping("/update")
     public Result update(@RequestBody Goods goods) {
         return goodsService.updateById(goods) ? Result.suc() : Result.fail();
     }
 
+    //删除
     @GetMapping("/del")
     public Result del(@RequestParam String id) {
         return goodsService.removeById(id) ? Result.suc() : Result.fail();
     }
 
+    //查询
     @GetMapping("/list")
-    public Result list(){
-        List list =  goodsService.goodsList();
+    public Result list() {
+        List list = goodsService.goodsList();
         return Result.suc(list);
     }
 
+    //分页查询
     @PostMapping("/listPage")
-    public Result listPage(@RequestBody QueryPageParam queryPageParam) {
-        HashMap param = queryPageParam.getParam();
-        String name = (String) param.get("name");
-        String goodsType = (String) param.get("goodstype");
-        String storage = (String) param.get("storage");
+    public Result listPage(@RequestBody @Valid QueryPageParam queryPageParam) {
+        // 参数校验
+        if (queryPageParam == null || queryPageParam.getParam() == null) {
+            return Result.fail();
+        }
 
-        Page<Goods> page = new Page();
-        page.setCurrent(queryPageParam.getPageNum());
-        page.setSize(queryPageParam.getPageSize());
+        Map<String, String> param = queryPageParam.getParam();
+        String name = param.get("name");
+        String goodsType = param.get("goodstype");
+        String storage = param.get("storage");
 
+        // 分页设置
+        Page<Goods> page = new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
+        // 查询条件构建
         LambdaQueryWrapper<Goods> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.isNotBlank(name) && !"null".equals(name)) {
+        if (StringUtils.isNotBlank(name)) {
             lambdaQueryWrapper.like(Goods::getName, name);
         }
-        if (StringUtils.isNotBlank(goodsType) && !"null".equals(goodsType)) {
+        if (StringUtils.isNotBlank(goodsType)) {
             lambdaQueryWrapper.eq(Goods::getGoodstype, goodsType);
         }
-        if (StringUtils.isNotBlank(storage) && !"null".equals(storage)) {
+        if (StringUtils.isNotBlank(storage)) {
             lambdaQueryWrapper.eq(Goods::getStorage, storage);
         }
-
-        IPage result = goodsService.pageCC(page, lambdaQueryWrapper);
-        goodsService.pageCC(page, lambdaQueryWrapper);
-
-        List<Goods> goodsList = goodsService.lambdaQuery()
-                .orderByDesc(Goods::getId)
-                .list();
-
-         return Result.suc(result.getRecords(),result.getTotal());
+        // 按ID降序排序
+        lambdaQueryWrapper.orderByDesc(Goods::getId);
+        // 执行查询
+        IPage<Goods> result = goodsService.listGoodsPage(page, lambdaQueryWrapper);
+        return Result.suc(result.getRecords(), result.getTotal());
     }
 
 
+    //导出
     @GetMapping("/export")
     public void exportGoods(HttpServletResponse response) throws Exception {
         ExcelWriter writer = ExcelUtil.getWriter(true);
@@ -107,20 +114,22 @@ public class GoodsController {
         Map<Integer, String> goodsTypeMap = goodstypeService.getGoodsTypeMap();
 
         // 创建用于导出的Map列表
+
         List<Map<String, Object>> exportList = new ArrayList<>();
-        for (Goods item : list) {
+        for (int i = 0; i < list.size(); i++) {
+            Goods item = list.get(i);
             Map<String, Object> goods = new LinkedHashMap<>();
-            goods.put("id", item.getId());
+            goods.put("serialNumber", i + 1); // 使用连续序号替代ID
             goods.put("name", item.getName());
-            goods.put("storage", storageMap.get(item.getStorage())); // 转换为名称
-            goods.put("goodstype", goodsTypeMap.get(item.getGoodstype())); // 转换为名称
+            goods.put("storage", storageMap.get(item.getStorage()));
+            goods.put("goodstype", goodsTypeMap.get(item.getGoodstype()));
             goods.put("count", item.getCount());
             goods.put("remark", item.getRemark());
             exportList.add(goods);
         }
 
-        // 设置只导出需要的列（排除原始ID字段）
-        writer.addHeaderAlias("id", "序号");
+        // 设置表头别名
+        writer.addHeaderAlias("serialNumber", "序号");
         writer.addHeaderAlias("name", "物品名称");
         writer.addHeaderAlias("storage", "所属仓库");
         writer.addHeaderAlias("goodstype", "所属分类");
@@ -137,6 +146,8 @@ public class GoodsController {
         outputStream.close();
     }
 
+
+    //导入
     @PostMapping("/import")
     public Result importGoods(@RequestBody MultipartFile file) throws Exception {
         ExcelReader reader = ExcelUtil.getReader(file.getInputStream());
@@ -146,7 +157,7 @@ public class GoodsController {
         for (Goods goods : goodsList) {
             // 根据仓库名称查询仓库ID
             Storage storage = storageService.lambdaQuery()
-                    .eq(Storage::getName, goods.getStorageName()) // 假设Goods类中有storageName字段
+                    .eq(Storage::getName, goods.getStorageName())
                     .one();
             if (storage != null) {
                 goods.setStorage(storage.getId());
@@ -154,7 +165,7 @@ public class GoodsController {
 
             // 根据分类名称查询分类ID
             Goodstype goodsType = goodstypeService.lambdaQuery()
-                    .eq(Goodstype::getName, goods.getGoodsTypeName()) // 假设Goods类中有goodsTypeName字段
+                    .eq(Goodstype::getName, goods.getGoodsTypeName())
                     .one();
             if (goodsType != null) {
                 goods.setGoodstype(goodsType.getId());

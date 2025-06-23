@@ -4,20 +4,36 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.wms.entity.Goods">
-        <id column="id" property="id" />
-        <result column="name" property="name" />
-        <result column="storage" property="storage" />
-        <result column="goodsType" property="goodstype" />
-        <result column="count" property="count" />
-        <result column="remark" property="remark" />
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="storage" property="storage"/>
+        <result column="goodsType" property="goodstype"/>
+        <result column="count" property="count"/>
+        <result column="remark" property="remark"/>
     </resultMap>
 
-    <select id="pageCC" resultType="com.wms.entity.Goods">
+    <select id="listGoodsPage" resultType="com.wms.entity.Goods">
         select * from goods ${ew.customSqlSegment}
     </select>
     <select id="goodsList" resultType="com.wms.entity.Goods">
         select id,name,storage,goodstype,count,remark from goods
     </select>
+    <select id="getGoodsCountByStorage" resultType="java.util.Map">
+        select storage, SUM(count) as total from goods GROUP BY storage
+    </select>
+    <select id="getGoodsCountByType" resultType="java.util.Map">
+        select goodstype, SUM(count) as total from goods GROUP BY goodstype
+    </select>
+    <select id="getGoodsCountByGoods" resultType="java.util.Map">
+        select name, SUM(count) as total from goods GROUP BY name
+    </select>
+    <select id="getLowStockCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)  FROM goods WHERE count &lt;  #{threshold}
+    </select>
+    <select id="getTotalStock" resultType="java.lang.Integer">
+        SELECT COALESCE(SUM(count), 0) AS total FROM goods
+    </select>
+
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, name, storage, goodsType, count, remark

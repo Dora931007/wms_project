@@ -3,7 +3,9 @@ package com.wms.entity;
 import cn.hutool.core.annotation.Alias;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,7 +14,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="Goodstype对象", description="")
+@ApiModel(value = "Goodstype对象", description = "")
 public class Goodstype implements Serializable {
 
     private static final long serialVersionUID = 1L;

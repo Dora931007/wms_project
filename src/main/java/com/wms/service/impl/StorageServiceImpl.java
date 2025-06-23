@@ -21,11 +21,12 @@ public class StorageServiceImpl extends ServiceImpl<StorageMapper, Storage> impl
     private StorageMapper storageMapper;
 
     @Override
-        public IPage pageCC(IPage< Storage > page, Wrapper wrapper) {
-            return storageMapper.pageCC(page,wrapper);
-        }
+    public IPage pageCC(IPage<Storage> page, Wrapper wrapper) {
+        return storageMapper.pageCC(page, wrapper);
+    }
 
     //获取仓库类型ID与名称的映射关系
+    //通过仓库ID查找对应的名称。
     @Override
     public Map<Integer, String> getStorageMap() {
         List<Storage> storages = storageMapper.selectList(null);
@@ -33,6 +34,7 @@ public class StorageServiceImpl extends ServiceImpl<StorageMapper, Storage> impl
                 .collect(Collectors.toMap(Storage::getId, Storage::getName));
     }
 
+    //通过仓库名称反向查找ID
     @Override
     public Map<String, Integer> getStorageNameToIdMap() {
         List<Storage> list = this.list();

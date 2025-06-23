@@ -1,6 +1,7 @@
 package com.wms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.wms.entity.Goods;
 import com.wms.entity.Record;
@@ -12,11 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -27,6 +24,9 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record> impleme
 
     @Override
     public IPage pageCC(IPage<Record> page, Wrapper wrapper) {
-        return recordMapper.pageCC(page,wrapper);
+        return recordMapper.pageCC(page, wrapper);
     }
+
+
+
 }

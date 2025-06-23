@@ -2,7 +2,9 @@ package com.wms.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -10,7 +12,7 @@ import lombok.*;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="User对象", description="")
+@ApiModel(value = "User对象", description = "")
 //@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class User implements Serializable {
 

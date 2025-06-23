@@ -23,21 +23,29 @@ public class GoodstypeServiceImpl extends ServiceImpl<GoodstypeMapper, Goodstype
 
     @Override
     public IPage pageCC(IPage<Goodstype> page, Wrapper wrapper) {
-        return goodstypeMapper.pageCC(page,wrapper);
+        return goodstypeMapper.pageCC(page, wrapper);
     }
 
     //获取商品类型ID与名称的映射关系
+    //通过商品类型ID查找对应的名称。
     @Override
     public Map<Integer, String> getGoodsTypeMap() {
         List<Goodstype> goodsTypes = goodstypeMapper.selectList(null);
         return goodsTypes.stream()
-                .collect(Collectors.toMap(Goodstype::getId, Goodstype::getName));
+                .collect(Collectors.toMap( // 提取ID作为Key  Name作为Value
+                        Goodstype::getId,
+                        Goodstype::getName
+                ));
     }
 
+    //通过商品类型名称反向查找ID
     @Override
     public Map<String, Integer> getGoodsTypeNameToIdMap() {
         List<Goodstype> list = this.list();
-        return list.stream().collect(Collectors.toMap(Goodstype::getName, Goodstype::getId));
+        return list.stream().collect(Collectors.toMap(  // 提取Name作为Key  ID作为Value
+                Goodstype::getName,
+                Goodstype::getId
+        ));
     }
 
 

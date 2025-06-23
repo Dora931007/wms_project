@@ -3,8 +3,11 @@ package com.wms.entity;
 import cn.hutool.core.annotation.Alias;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.TableField;
+
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -16,7 +19,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-@ApiModel(value="Record对象", description="")
+@ApiModel(value = "Record对象", description = "")
 public class Record implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,7 +43,7 @@ public class Record implements Serializable {
     private Integer count;
 
     @ApiModelProperty(value = "操作时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Alias("操作时间")
     private LocalDateTime createtime;
 

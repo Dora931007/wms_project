@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.wms.entity.Storage;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.wms.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,6 +12,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface StorageMapper extends BaseMapper<Storage> {
 
-    IPage pageCC(IPage<Storage> page, @Param(Constants.WRAPPER) Wrapper wrapper);
+    IPage<Storage> pageCC(IPage<Storage> page, @Param(Constants.WRAPPER) Wrapper wrapper);
 
 }
