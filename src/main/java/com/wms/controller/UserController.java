@@ -125,7 +125,7 @@ public class UserController {
         // 构建查询条件
         LambdaQueryWrapper<User> queryWrapper = buildQueryWrapper(name, sex, roleId);
         // 执行查询
-        IPage<User> result = userService.pageCC(page, queryWrapper);
+        IPage<User> result = userService.queryUserPageByWrapper(page, queryWrapper);
         log.debug("查询用户列表，总数: {}", result.getTotal());
         return Result.suc(result.getRecords(), result.getTotal());
     }
@@ -185,7 +185,7 @@ public class UserController {
         lambdaQueryWrapper.like(User::getName, name);
 
         //IPage result = userService.pageC(page);
-        IPage result = userService.pageCC(page, lambdaQueryWrapper);
+        IPage result = userService.queryUserPageByWrapper(page, lambdaQueryWrapper);
         System.out.println("Total===" + result.getTotal());
 
         return result.getRecords();

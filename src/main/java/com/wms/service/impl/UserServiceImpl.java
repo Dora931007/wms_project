@@ -19,12 +19,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserMapper userMapper;
 
     @Override
-    public IPage pageC(IPage<User> page) {
-        return userMapper.pageC(page);
+    public IPage queryUserPage(IPage<User> page) {
+        return userMapper.queryUserPage(page);
     }
 
     @Override
-    public IPage pageCC(IPage<User> page, Wrapper wrapper) {
-        return userMapper.pageCC(page, wrapper);
+    public IPage queryUserPageByWrapper(IPage<User> page, Wrapper wrapper) {
+        return userMapper.queryUserPageByWrapper(page, wrapper);
     }
 }

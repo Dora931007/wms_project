@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * 物品服务接口
+ * 继承MyBatis-Plus的IService获得基础CRUD功能
+ */
 public interface GoodsService extends IService<Goods> {
 
     //分页查询

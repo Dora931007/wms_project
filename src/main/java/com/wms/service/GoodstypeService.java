@@ -11,7 +11,7 @@ import java.util.Map;
 
 public interface GoodstypeService extends IService<Goodstype> {
 
-    IPage pageCC(IPage<Goodstype> page, Wrapper wrapper);
+    IPage queryGoodsTypePageByWrapper(IPage<Goodstype> page, Wrapper wrapper);
 
     Map<Integer, String> getGoodsTypeMap();
 

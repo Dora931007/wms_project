@@ -12,6 +12,6 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface GoodstypeMapper extends BaseMapper<Goodstype> {
 
-    IPage<Goodstype> pageCC(IPage<Goodstype> page, @Param(Constants.WRAPPER) Wrapper wrapper);
+    IPage<Goodstype> queryGoodsTypePageByWrapper(IPage<Goodstype> page, @Param(Constants.WRAPPER) Wrapper wrapper);
 
 }

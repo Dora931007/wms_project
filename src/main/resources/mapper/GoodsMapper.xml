@@ -3,6 +3,7 @@
 <mapper namespace="com.wms.mapper.GoodsMapper">
 
     <!-- 通用查询映射结果 -->
+    <!-- 商品实体映射配置 -->
     <resultMap id="BaseResultMap" type="com.wms.entity.Goods">
         <id column="id" property="id"/>
         <result column="name" property="name"/>
@@ -12,12 +13,17 @@
         <result column="remark" property="remark"/>
     </resultMap>
 
+    <!-- 分页查询商品 -->
     <select id="listGoodsPage" resultType="com.wms.entity.Goods">
         select * from goods ${ew.customSqlSegment}
     </select>
+
+    <!-- 查询所有商品 -->
     <select id="goodsList" resultType="com.wms.entity.Goods">
         select id,name,storage,goodstype,count,remark from goods
     </select>
+
+    <!-- 按仓库分组统计 -->
     <select id="getGoodsCountByStorage" resultType="java.util.Map">
         select storage, SUM(count) as total from goods GROUP BY storage
     </select>
@@ -27,9 +33,12 @@
     <select id="getGoodsCountByGoods" resultType="java.util.Map">
         select name, SUM(count) as total from goods GROUP BY name
     </select>
+
+    <!-- 库存预警查询 -->
     <select id="getLowStockCount" resultType="java.lang.Integer">
         SELECT COUNT(*)  FROM goods WHERE count &lt;  #{threshold}
     </select>
+
     <select id="getTotalStock" resultType="java.lang.Integer">
         SELECT COALESCE(SUM(count), 0) AS total FROM goods
     </select>

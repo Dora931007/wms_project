@@ -13,7 +13,6 @@ import lombok.*;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value = "User对象", description = "")
-//@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -28,10 +27,10 @@ public class User implements Serializable {
     @ApiModelProperty(value = "名字")
     private String name;
 
-
     @ApiModelProperty(value = "密码")
     private String password;
 
+    @ApiModelProperty(value = "年龄")
     private Integer age;
 
     @ApiModelProperty(value = "性别")

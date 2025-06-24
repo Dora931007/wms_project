@@ -46,7 +46,7 @@ public class GoodsController {
     //新增
     @PostMapping("/save")
     public Result add(@RequestBody Goods goods) {
-        System.out.println("Save goods data: " + goods);
+        System.out.println("保存商品数据为: " + goods);
         return goodsService.save(goods) ? Result.suc() : Result.fail();
     }
 
@@ -71,41 +71,47 @@ public class GoodsController {
 
     //分页查询
     @PostMapping("/listPage")
-    public Result listPage(@RequestBody @Valid QueryPageParam queryPageParam) {
-        // 参数校验
+    public Result listPage(@RequestBody @Valid QueryPageParam queryPageParam) { //使用@Valid注解自动验证参数合法性
+        //参数校验,检查查询参数是否为空，避免空指针异常
         if (queryPageParam == null || queryPageParam.getParam() == null) {
             return Result.fail();
         }
-
+        //从参数对象中获取查询条件Map
         Map<String, String> param = queryPageParam.getParam();
         String name = param.get("name");
         String goodsType = param.get("goodstype");
         String storage = param.get("storage");
 
-        // 分页设置
+        //构建分页对象, 使用MyBatis-Plus的Page类，传入当前页码和每页大小
         Page<Goods> page = new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
-        // 查询条件构建
+        //构建查询条件 使用LambdaQueryWrapper构建类型安全的查询条件
         LambdaQueryWrapper<Goods> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+
         if (StringUtils.isNotBlank(name)) {
-            lambdaQueryWrapper.like(Goods::getName, name);
+            lambdaQueryWrapper.like(Goods::getName, name); //根据名称模糊查询
         }
         if (StringUtils.isNotBlank(goodsType)) {
-            lambdaQueryWrapper.eq(Goods::getGoodstype, goodsType);
+            lambdaQueryWrapper.eq(Goods::getGoodstype, goodsType);// 根据物品分类精确查询
         }
         if (StringUtils.isNotBlank(storage)) {
-            lambdaQueryWrapper.eq(Goods::getStorage, storage);
+            lambdaQueryWrapper.eq(Goods::getStorage, storage);// 根据仓库精确查询
         }
-        // 按ID降序排序
+        //按ID降序，确保新添加的数据显示在前面
         lambdaQueryWrapper.orderByDesc(Goods::getId);
-        // 执行查询
+        //执行分页查询，调用Service层方法，传入分页参数和查询条件
         IPage<Goods> result = goodsService.listGoodsPage(page, lambdaQueryWrapper);
+        //获取当前页的数据列表和总条数帮助前端显示分页控件
         return Result.suc(result.getRecords(), result.getTotal());
     }
 
 
-    //导出
+    /**
+     * 导出商品数据到Excel
+     * @param response HTTP响应对象
+     */
     @GetMapping("/export")
     public void exportGoods(HttpServletResponse response) throws Exception {
+        // 使用Hutool工具库创建Excel写入器（ExcelWriter）的实例，用于将数据写入Excel文件，true表示生成的Excel文件是xlsx格式
         ExcelWriter writer = ExcelUtil.getWriter(true);
         List<Goods> list = goodsService.goodsList();
 
@@ -113,18 +119,21 @@ public class GoodsController {
         Map<Integer, String> storageMap = storageService.getStorageMap();
         Map<Integer, String> goodsTypeMap = goodstypeService.getGoodsTypeMap();
 
-        // 创建用于导出的Map列表
-
+        // 创建一个ArrayList来存储最终要导出的数据，每个元素是一个Map代表一行数据
         List<Map<String, Object>> exportList = new ArrayList<>();
+        // 遍历商品列表(list)，i是当前索引
         for (int i = 0; i < list.size(); i++) {
+            // 获取当前商品对象
             Goods item = list.get(i);
+            // 使用LinkedHashMap保持字段顺序(确保Excel列顺序一致)
             Map<String, Object> goods = new LinkedHashMap<>();
-            goods.put("serialNumber", i + 1); // 使用连续序号替代ID
+            goods.put("serialNumber", i + 1); // 使用连续序号替代ID 序号从1开始
             goods.put("name", item.getName());
             goods.put("storage", storageMap.get(item.getStorage()));
             goods.put("goodstype", goodsTypeMap.get(item.getGoodstype()));
             goods.put("count", item.getCount());
             goods.put("remark", item.getRemark());
+            // 将转换后的Map添加到导出列表
             exportList.add(goods);
         }
 
@@ -136,13 +145,21 @@ public class GoodsController {
         writer.addHeaderAlias("count", "物品数量");
         writer.addHeaderAlias("remark", "备注");
 
+        //将准备好的数据写入Excel工作簿,true表示自动写入表头
         writer.write(exportList, true);
+        //设置HTTP响应的内容类型并指定字符编码
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
+        //设置HTTP响应头，触发浏览器下载行为 attachment表示作为附件下载（而不是在浏览器中直接打开）
         response.setHeader("content-Disposition", "attachment;filename=" + URLEncoder.encode("物品信息", "UTF-8") + ".xlsx");
+        //获取HTTP响应的输出流，用于写入Excel文件内容
         ServletOutputStream outputStream = response.getOutputStream();
+        //将Excel内容写入到输出流,并且写入后关闭ExcelWriter（释放资源）
         writer.flush(outputStream, true);
+        //再次确认关闭
         writer.close();
+        //确保所有缓冲数据都写入输出流
         outputStream.flush();
+        //关闭输出流，释放资源
         outputStream.close();
     }
 
@@ -150,15 +167,18 @@ public class GoodsController {
     //导入
     @PostMapping("/import")
     public Result importGoods(@RequestBody MultipartFile file) throws Exception {
+        //创建Excel读取器并解析文件内容
         ExcelReader reader = ExcelUtil.getReader(file.getInputStream());
+        //将Excel数据读取为Goods对象列表,readAll方法会自动将每一行数据映射为Goods对象
         List<Goods> goodsList = reader.readAll(Goods.class);
 
-        // 转换仓库和分类名称到ID
+        //数据转换处理：将名称转换为ID
         for (Goods goods : goodsList) {
             // 根据仓库名称查询仓库ID
             Storage storage = storageService.lambdaQuery()
                     .eq(Storage::getName, goods.getStorageName())
                     .one();
+            // 如果查询到仓库，设置商品对应的仓库ID
             if (storage != null) {
                 goods.setStorage(storage.getId());
             }
@@ -172,7 +192,7 @@ public class GoodsController {
             }
         }
 
-        // 写入数据到数据库
+        //使用MyBatis-Plus的saveBatch方法进行批量插入到数据库
         goodsService.saveBatch(goodsList);
         return Result.suc();
     }
@@ -183,14 +203,16 @@ public class GoodsController {
         List<Map<String, Object>> storageStats = goodsService.getGoodsCountByStorage();
         // 2. 按分类统计商品数量
         List<Map<String, Object>> typeStats = goodsService.getGoodsCountByType();
-        // 3. 库存预警统计(数量<10的)
-        int lowStockCount = goodsService.getLowStockCount(10);
-        // 4. 商品总数
-        int totalGoods = goodsService.count();
-        // 5. 库存总量
-        int totalStock = goodsService.getTotalStock();
-        // 6. 按物品统计商品数量（新增）
+        // 3. 按物品统计商品数量
         List<Map<String, Object>> goodsStats = goodsService.getGoodsCountByGoods();
+        // 4. 库存预警统计(数量<50的)
+        int lowStockCount = goodsService.getLowStockCount(50);
+        // 5. 商品总数
+        int totalGoods = goodsService.count();
+        // 6. 库存总量
+        int totalStock = goodsService.getTotalStock();
+
+        //创建结果Map，用于聚合所有统计信息，将各类统计结果放入结果Map中
         Map<String, Object> result = new HashMap<>();
         result.put("storageStats", storageStats);
         result.put("typeStats", typeStats);

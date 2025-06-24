@@ -19,10 +19,10 @@
     <sql id="Base_Column_List">
         id, no, name, password, age, sex, phone, role_id, is_valid
     </sql>
-    <select id="pageC" resultType="com.wms.entity.User">
+    <select id="queryUserPage" resultType="com.wms.entity.User">
         select * from user
     </select>
-    <select id="pageCC" resultType="com.wms.entity.User">
+    <select id="queryUserPageByWrapper" resultType="com.wms.entity.User">
         select * from user ${ew.customSqlSegment}
     </select>
 

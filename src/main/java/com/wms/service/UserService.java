@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 public interface UserService extends IService<User> {
 
-    IPage pageC(IPage<User> page);
+    IPage queryUserPage(IPage<User> page);
 
-    IPage pageCC(IPage<User> page, Wrapper wrapper);
+    IPage queryUserPageByWrapper(IPage<User> page, Wrapper wrapper);
 }

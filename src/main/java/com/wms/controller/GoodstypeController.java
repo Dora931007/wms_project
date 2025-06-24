@@ -11,10 +11,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wms.common.QueryPageParam;
 import com.wms.common.Result;
 import com.wms.entity.Goodstype;
-import com.wms.entity.Storage;
-import com.wms.entity.User;
 import com.wms.service.GoodstypeService;
-import com.wms.service.StorageService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,10 +19,8 @@ import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @RestController

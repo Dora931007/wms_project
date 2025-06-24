@@ -49,7 +49,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Override
     public int getLowStockCount(int threshold) {
-        return goodsMapper.getLowStockCount(10);
+        return goodsMapper.getLowStockCount(threshold);
     }
 
     @Override

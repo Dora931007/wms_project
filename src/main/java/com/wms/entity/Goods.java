@@ -18,6 +18,7 @@ import lombok.EqualsAndHashCode;
 @ApiModel(value = "Goods对象", description = "")
 public class Goods implements Serializable {
 
+    //Java序列化的版本号，通过显式声明来控制序列化的兼容性
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "主键")
@@ -45,12 +46,12 @@ public class Goods implements Serializable {
     private String remark;
 
     @ApiModelProperty(value = "所属仓库名称")
-    @TableField(exist = false) // 表示不是数据库字段
+    @TableField(exist = false) // 不是数据库字段
     @Alias("所属仓库")
     private String storageName;
 
     @ApiModelProperty(value = "所属分类名称")
-    @TableField(exist = false) // 表示不是数据库字段
+    @TableField(exist = false)
     @Alias("所属分类")
     private String goodsTypeName;
 

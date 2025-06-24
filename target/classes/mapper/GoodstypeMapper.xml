@@ -8,7 +8,7 @@
         <result column="name" property="name"/>
         <result column="remark" property="remark"/>
     </resultMap>
-    <select id="pageCC" resultType="com.wms.entity.Goodstype">
+    <select id="queryGoodsTypePageByWrapper" resultType="com.wms.entity.Goodstype">
         select * from goodstype ${ew.customSqlSegment}
     </select>
 

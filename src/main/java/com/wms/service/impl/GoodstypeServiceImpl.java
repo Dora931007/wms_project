@@ -22,8 +22,8 @@ public class GoodstypeServiceImpl extends ServiceImpl<GoodstypeMapper, Goodstype
     private GoodstypeMapper goodstypeMapper;
 
     @Override
-    public IPage pageCC(IPage<Goodstype> page, Wrapper wrapper) {
-        return goodstypeMapper.pageCC(page, wrapper);
+    public IPage queryGoodsTypePageByWrapper(IPage<Goodstype> page, Wrapper wrapper) {
+        return goodstypeMapper.queryGoodsTypePageByWrapper(page, wrapper);
     }
 
     //获取商品类型ID与名称的映射关系
