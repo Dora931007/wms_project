@@ -26,7 +26,6 @@ public class Record implements Serializable {
 
     @ApiModelProperty(value = "主键")
     @TableId(value = "id", type = IdType.AUTO)
-    @Alias("序号")
     private Integer id;
 
     @ApiModelProperty(value = "物品")

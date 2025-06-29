@@ -111,7 +111,6 @@ public class GoodsController {
      */
     @GetMapping("/export")
     public void exportGoods(HttpServletResponse response) throws Exception {
-        // 使用Hutool工具库创建Excel写入器（ExcelWriter）的实例，用于将数据写入Excel文件，true表示生成的Excel文件是xlsx格式
         ExcelWriter writer = ExcelUtil.getWriter(true);
         List<Goods> list = goodsService.goodsList();
 
@@ -119,7 +118,6 @@ public class GoodsController {
         Map<Integer, String> storageMap = storageService.getStorageMap();
         Map<Integer, String> goodsTypeMap = goodstypeService.getGoodsTypeMap();
 
-        // 创建一个ArrayList来存储最终要导出的数据，每个元素是一个Map代表一行数据
         List<Map<String, Object>> exportList = new ArrayList<>();
         // 遍历商品列表(list)，i是当前索引
         for (int i = 0; i < list.size(); i++) {
@@ -145,21 +143,13 @@ public class GoodsController {
         writer.addHeaderAlias("count", "物品数量");
         writer.addHeaderAlias("remark", "备注");
 
-        //将准备好的数据写入Excel工作簿,true表示自动写入表头
         writer.write(exportList, true);
-        //设置HTTP响应的内容类型并指定字符编码
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
-        //设置HTTP响应头，触发浏览器下载行为 attachment表示作为附件下载（而不是在浏览器中直接打开）
         response.setHeader("content-Disposition", "attachment;filename=" + URLEncoder.encode("物品信息", "UTF-8") + ".xlsx");
-        //获取HTTP响应的输出流，用于写入Excel文件内容
         ServletOutputStream outputStream = response.getOutputStream();
-        //将Excel内容写入到输出流,并且写入后关闭ExcelWriter（释放资源）
         writer.flush(outputStream, true);
-        //再次确认关闭
         writer.close();
-        //确保所有缓冲数据都写入输出流
         outputStream.flush();
-        //关闭输出流，释放资源
         outputStream.close();
     }
 

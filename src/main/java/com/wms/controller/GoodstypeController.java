@@ -136,42 +136,45 @@ public class GoodstypeController {
 
     @GetMapping("/export")
     public void exportGoodsType(HttpServletResponse response) throws Exception {
-        // 1. 设置响应头
+        //设置响应头
         String fileName = URLEncoder.encode("物品分类信息", "UTF-8") + ".xlsx";
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
 
-        // 2. 获取数据并转换为导出格式
+        //获取数据并转换为导出格式
         List<Goodstype> list = goodstypeService.list();
         List<Map<String, Object>> exportList = new ArrayList<>();
 
-        // 使用普通for循环以便获取索引
+        //转换为导出格式并添加前端序号
         for (int i = 0; i < list.size(); i++) {
             Goodstype item = list.get(i);
             Map<String, Object> map = new LinkedHashMap<>();
-            map.put("serialNumber", i + 1);  // 前端连续序号
+            map.put("serialNumber", i + 1);
             map.put("name", item.getName());
             map.put("remark", item.getRemark());
             exportList.add(map);
         }
 
-        // 3. 使用try-with-resources确保资源关闭
+        // 使用try-with-resources确保资源关闭（自动管理资源，避免内存泄漏）
+        // 参数true表示生成xlsx格式（false为xls）
         try (ExcelWriter writer = ExcelUtil.getWriter(true);
              ServletOutputStream out = response.getOutputStream()) {
 
-            // 4. 设置表头别名
+            //设置表头别名（将实体类字段名映射为Excel表头显示名称）
             writer.addHeaderAlias("serialNumber", "序号");
             writer.addHeaderAlias("name", "物品分类名称");
             writer.addHeaderAlias("remark", "备注");
 
-            // 5. 写入数据并刷新
+            //写入数据并刷新  true-写入表头
             writer.write(exportList, true);
+            //将内存中的Excel数据刷写到输出流 out-目标输出流 true-关闭输出流
             writer.flush(out, true);
         }
     }
     @PostMapping("/import")
     public Result importGoods(@RequestBody MultipartFile file) throws Exception {
         ExcelReader reader = ExcelUtil.getReader(file.getInputStream());
+        //读取整个Excel文件，自动将每一行数据转换成Goodstype类的对象并存储。
         List<Goodstype> goodstypeList = reader.readAll(Goodstype.class);
         //写入数据到数据库
         goodstypeService.saveBatch(goodstypeList);

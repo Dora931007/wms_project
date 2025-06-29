@@ -37,38 +37,35 @@ public class RecordController {
     @Resource
     private GoodsService goodsService;
 
-    @Resource
-    private GoodstypeService goodstypeService;
-
-    @Resource
-    private StorageService storageService;
 
     @PostMapping("/save")
     public Result add(@RequestBody Record record) {
+        //根据record中的商品ID获取商品完整信息
         Goods goods = goodsService.getById(record.getGoods());
-        Goods remark = goodsService.getById(record.getRemark());
-        System.out.println("remark的值是:" + remark);
         int n = record.getCount();
 
+        // 如果是出库操作（action="2"），将数量转为负数
         if ("2".equals(record.getAction())) {
             n = -n;
             record.setCount(n);
         }
+        // 计算新的库存数量（原库存 +/- 操作数量）
         int num = goods.getCount() + n;
         goods.setCount(num);
 
-        // 新增代码：将record的remark更新到goods
+        //将record的remark更新到goods
         if (StringUtils.isNotBlank(record.getRemark())) {
             goods.setRemark(record.getRemark());
         }
-
         goodsService.updateById(goods);
+
         return recordService.save(record) ? Result.suc() : Result.fail();
     }
 
 
     @PostMapping("/listPage")
     public Result listPage(@RequestBody QueryPageParam queryPageParam) {
+        //从请求参数中获取查询条件Map  获取各查询条件参数（如商品名称、商品类型、仓库等）
         HashMap param = queryPageParam.getParam();
         String name = (String) param.get("name");
         String goodsType = (String) param.get("goodstype");
@@ -79,13 +76,14 @@ public class RecordController {
         page.setCurrent(queryPageParam.getPageNum());
         page.setSize(queryPageParam.getPageSize());
 
+        // 创建查询条件构造器 设置多表关联条件
         QueryWrapper<Record> queryWrapper = new QueryWrapper();
         queryWrapper.apply(" a.goods=b.id and b.storage=c.id and b.goodsType=d.id ");
 
-        // 添加排序条件，按创建时间降序
+        //默认按创建时间降序排序（最新记录在前）
         queryWrapper.orderByDesc("a.createTime");
 
-        if ("2".equals(roleId)) {
+        if ("2".equals(roleId)) { //普通用户只能查看自己的记录
             queryWrapper.apply(" a.user_id= " + userId);
         }
         if (StringUtils.isNotBlank(name) && !"null".equals(name)) {
@@ -97,8 +95,9 @@ public class RecordController {
         if (StringUtils.isNotBlank(storage) && !"null".equals(storage)) {
             queryWrapper.eq("c.id", storage);
         }
+
+        //调用自定义的分页查询方法
         IPage result = recordService.pageCC(page, queryWrapper);
-        recordService.pageCC(page, queryWrapper);
         return Result.suc(result.getRecords(), result.getTotal());
     }
 }

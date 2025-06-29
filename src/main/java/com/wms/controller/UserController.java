@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wms.common.QueryPageParam;
 import com.wms.common.Result;
-import com.wms.entity.Goods;
 import com.wms.entity.Menu;
 import com.wms.entity.User;
 import com.wms.service.MenuService;
@@ -43,7 +42,6 @@ public class UserController {
         return list.size() > 0 ? Result.suc(list) : Result.fail();
     }
 
-    //新增
     @PostMapping("/save")
     public Result add(@RequestBody User user) {
         return userService.save(user) ? Result.suc() : Result.fail();
@@ -66,24 +64,23 @@ public class UserController {
                 .eq(User::getPassword, user.getPassword())
                 .list();
 
+        // 如果查询结果不为空（说明账号密码正确）
         if (list.size() > 0) {
-            User user1 = list.get(0);
+            User user1= list.get(0);// 获取第一个用户（理论上唯一用户，因为账号应该唯一）
+            // 查询该用户角色对应的菜单权限
+            // like条件：Menu表的menuright字段包含用户的roleId
             List<Menu> menuList = menuService.lambdaQuery().like(Menu::getMenuright, user1.getRoleId()).list();
+
+            //存入用户信息和菜单列表 并返回结果信息给前端
             HashMap<String, Object> res = new HashMap<>();
             res.put("user", user1);
-            res.put("menu", menuList); // 返回的是 List<Menu>
+            res.put("menu", menuList);
             return Result.suc(res);
 
         }
         return Result.fail();
     }
 
-
-    //修改
-//    @PostMapping("/update")
-//    public boolean update(@RequestBody User user){
-//        return userService.updateById(user);
-//    }
 
     //新增或修改
     @PostMapping("/saveOrUpdate")
@@ -97,32 +94,21 @@ public class UserController {
         return userService.removeById(id);
     }
 
-    //查询（模糊、匹配）
-    @PostMapping("/listP")
-    public Result listP(@RequestBody User user) {
-        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper();
-        if (StringUtils.isNotBlank(user.getName())) {
-            lambdaQueryWrapper.like(User::getName, user.getName());
-        }
-        return Result.suc(userService.list(lambdaQueryWrapper));
-    }
 
-
-    @PostMapping("/listPageC1")
-    public Result listPageC1(@RequestBody @Valid QueryPageParam queryPageParam) {
-        // 参数校验
+    @PostMapping("/listUserPage")
+    public Result listUserPage(@RequestBody @Valid QueryPageParam queryPageParam) { //使用@Valid注解自动验证参数合法性
+        // 检查传入的查询参数对象是否为空，如果为空直接返回失败结果
         if (queryPageParam == null || queryPageParam.getParam() == null) {
             return Result.fail();
         }
-
-        // 获取查询参数
+        // 获取查询参数   提取出具体的查询条件：姓名(name)、性别(sex)和角色ID(roleId)
         Map<String, String> param = queryPageParam.getParam();
         String name = param.get("name");
         String sex = param.get("sex");
         String roleId = param.get("roleId");
         // 构建分页对象
         Page<User> page = new Page<>(queryPageParam.getPageNum(), queryPageParam.getPageSize());
-        // 构建查询条件
+        // 构建查询条件 调用buildQueryWrapper方法动态组装查询条件
         LambdaQueryWrapper<User> queryWrapper = buildQueryWrapper(name, sex, roleId);
         // 执行查询
         IPage<User> result = userService.queryUserPageByWrapper(page, queryWrapper);
@@ -147,49 +133,5 @@ public class UserController {
         wrapper.orderByDesc(User::getId);
         return wrapper;
     }
-
-
-    //测试分页2
-    @PostMapping("/listPage")
-    public List<User> listPage(@RequestBody QueryPageParam queryPageParam) {
-        HashMap param = queryPageParam.getParam();
-        String name = (String) param.get("name");
-        System.out.println("num==" + queryPageParam.getPageNum());
-        System.out.println("size==" + queryPageParam.getPageSize());
-
-        Page<User> page = new Page();
-        page.setCurrent(queryPageParam.getPageNum());
-        page.setSize(queryPageParam.getPageSize());
-        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.like(User::getName, name);
-
-        IPage result = userService.page(page, lambdaQueryWrapper);
-        System.out.println("Total===" + result.getTotal());
-
-        return result.getRecords();
-    }
-
-
-    @PostMapping("/listPageC")
-    public List<User> listPageC(@RequestBody QueryPageParam queryPageParam) {
-        HashMap param = queryPageParam.getParam();
-        String name = (String) param.get("name");
-        System.out.println("num==" + queryPageParam.getPageNum());
-        System.out.println("size==" + queryPageParam.getPageSize());
-
-
-        Page<User> page = new Page();
-        page.setCurrent(queryPageParam.getPageNum());
-        page.setSize(queryPageParam.getPageSize());
-        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.like(User::getName, name);
-
-        //IPage result = userService.pageC(page);
-        IPage result = userService.queryUserPageByWrapper(page, lambdaQueryWrapper);
-        System.out.println("Total===" + result.getTotal());
-
-        return result.getRecords();
-    }
-
 
 }

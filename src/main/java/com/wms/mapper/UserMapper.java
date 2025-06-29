@@ -12,9 +12,13 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
 
-    //简单分页，不带条件
+    /***
+     * 简单分页
+     */
     IPage<User> queryUserPage(IPage<User> page);
 
-    //带条件的分页查询，更灵活
+    /***
+     * 带条件的分页查询
+     */
     IPage<User> queryUserPageByWrapper(IPage<User> page, @Param(Constants.WRAPPER) Wrapper wrapper);
 }

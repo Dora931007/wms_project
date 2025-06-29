@@ -17,7 +17,6 @@ import java.util.Map;
 public interface GoodsService extends IService<Goods> {
 
     //分页查询
-    //IPage pageCC(IPage<Goods> page, Wrapper wrapper);
     IPage<Goods> listGoodsPage(Page<Goods> page, Wrapper<Goods> queryWrapper);
 
     //获取商品列表
